@@ -26,7 +26,8 @@
     "https://mail.google.com/*",
     "https://outlook.live.com/*",
     "https://outlook.office.com/*",
-    "https://outlook.office365.com/*"
+    "https://outlook.office365.com/*",
+    "https://mail.yahoo.com/*"
   ],
   "content_scripts": [
     {
@@ -41,6 +42,11 @@
         "https://outlook.office365.com/*"
       ],
       "js": ["src/content-scripts/outlook-injector.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://mail.yahoo.com/*"],
+      "js": ["src/content-scripts/yahooMail-injector.js"],
       "run_at": "document_end"
     }
   ]
