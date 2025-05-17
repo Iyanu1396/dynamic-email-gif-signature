@@ -27,7 +27,8 @@
     "https://outlook.live.com/*",
     "https://outlook.office.com/*",
     "https://outlook.office365.com/*",
-    "https://mail.yahoo.com/*"
+    "https://mail.yahoo.com/*",
+     "https://*.supabase.co/*"
   ],
   "content_scripts": [
     {

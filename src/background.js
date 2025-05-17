@@ -1,41 +1,48 @@
-// Default GIFs
-const defaultGifs = [
-  "https://media4.giphy.com/media/yoJC2iZ13CCkYd3aDK/giphy.gif",
-  "https://media2.giphy.com/media/xYGnFm4mVcMxYIVq3v/giphy.gif",
-  "https://media2.giphy.com/media/iibH5ymW6LFvSIVyUc/giphy.gif",
-  "https://media0.giphy.com/media/MJp9HJBMGVfLps9zsN/giphy.gif",
-  "https://media0.giphy.com/media/2yqyPZUR4mPFyRTpYi/giphy.gif",
-  "https://media0.giphy.com/media/3DmODIoUHALa9QDUp2/giphy.gif",
-  "https://media3.giphy.com/media/5quxvnjc77jutz5KGR/giphy.gif",
-  "https://media0.giphy.com/media/Mx936qy6jLxyjbqTiR/giphy.gif",
-  "https://media0.giphy.com/media/fUQ4rhUZJYiQsas6WD/giphy.gif",
-  "https://media1.giphy.com/media/tTc43DeTm2kkJTrI2G/giphy.gif",
-  "https://media3.giphy.com/media/8VrtCswiLDNnO/giphy.gif",
-  "https://media4.giphy.com/media/n4oKYFlAcv2AU/giphy.gif",
-  "https://media2.giphy.com/media/DbV0RlRbSWYBG/giphy.gif",
-  "https://media4.giphy.com/media/Dh5q0sShxgp13DwrvG/giphy.gif",
-];
+import { supabase } from './lib/supabaseClient';
 
-// Initialize storage with default GIFs
-async function initializeStorage() {
-  const result = await chrome.storage.local.get(["gifs"]);
-  if (!result.gifs || result.gifs.length === 0) {
-    await chrome.storage.local.set({ gifs: defaultGifs });
+// Get a random GIF directly from Supabase
+async function getRandomGifFromSupabase() {
+  try {
+    // First get the total count of GIFs
+    const { count } = await supabase
+      .from('gifs')
+      .select('*', { count: 'exact', head: true });
+
+    if (!count || count === 0) {
+      console.warn('[Supabase] No GIFs found in database');
+      return null;
+    }
+
+    // Get a random offset
+    const randomOffset = Math.floor(Math.random() * count);
+    
+    // Fetch a single random GIF
+    const { data, error } = await supabase
+      .from('gifs')
+      .select('gif_url')
+      .range(randomOffset, randomOffset)
+      .single();
+
+    if (error) throw error;
+    if (!data) return null;
+
+    // Generate public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('gifs')
+      .getPublicUrl(data.gif_url);
+
+    return publicUrl;
+    
+  } catch (error) {
+    console.error('[Supabase] Error fetching random GIF:', error);
+    return null;
   }
 }
 
-// Get a random GIF
-async function getRandomGif() {
-  await initializeStorage();
-  const result = await chrome.storage.local.get(["gifs"]);
-  const gifs = result.gifs || defaultGifs;
-  return gifs[Math.floor(Math.random() * gifs.length)];
-}
-
-// Message handler
+// Updated message handler
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "getRandomGif") {
-    getRandomGif().then((gifUrl) => {
+    getRandomGifFromSupabase().then((gifUrl) => {
       sendResponse({ gifUrl });
     });
     return true; // Required for async response
@@ -59,4 +66,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 // Initialize on install
-chrome.runtime.onInstalled.addListener(initializeStorage);
+chrome.runtime.onInstalled.addListener(() => {
+  console.log('[Extension] Initializing Supabase connection...');
+});
