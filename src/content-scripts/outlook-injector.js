@@ -7,7 +7,7 @@
   // Track the current GIF for persistence
   let currentGifDataUrl = null;
   // Your website URL that the GIF will link to
-  const WEBSITE_URL = 'https://iyanu-codes.vercel.app/';
+  const WEBSITE_URL = 'https://dynamic-gif-signature.netlify.app/dashboard/manage';
   
   // Base64 encoded transparent 1x1 GIF as placeholder
   const PLACEHOLDER_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';

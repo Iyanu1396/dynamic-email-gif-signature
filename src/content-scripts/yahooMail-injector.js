@@ -185,7 +185,7 @@
     signature.innerHTML = `
       <div style="max-width: 250px; margin: 15px 0; position: relative;">
         <div class="gif-protection-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;"></div>
-        <a href="https://iyanu-codes.vercel.app/" target="_blank" class="gif-link" style="display: block; pointer-events: none;">
+        <a href="https://dynamic-gif-signature.netlify.app/dashboard/manage" target="_blank" class="gif-link" style="display: block; pointer-events: none;">
           <img src="${gifUrl}" class="protected-gif" style="max-width: 100%; max-height: 150px; display: block; border: 0; pointer-events: none;">
         </a>
       </div>
